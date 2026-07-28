@@ -13,7 +13,7 @@ import pytest
 from skillscan.scanner import scan_path
 
 CORPUS = Path(__file__).parent / "corpus"
-SKILLS = ["docx", "pdf", "mcp-builder"]
+SKILLS = sorted(d.name for d in CORPUS.iterdir() if d.is_dir())
 
 
 @pytest.mark.parametrize("skill", SKILLS)

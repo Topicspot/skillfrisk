@@ -18,7 +18,10 @@ PROMPT_INJECTION_PATTERNS = [
 ]
 SHELL_PIPE_PATTERN = re.compile(r"(curl|wget)\b[^\n|;]*(\||;|&&)\s*(sh|bash|python)", re.I)
 SECRET_READ_PATTERN = re.compile(
-    r"(~/(\.ssh|\.aws|\.config)|/etc/passwd|\.env\b|os\.environ|getenv)", re.I
+    r"(~/(\.ssh|\.aws|\.config)|/etc/passwd"
+    r"|(os\.environ|getenv|dotenv|\.env\b)[^\n]{0,80}(key|token|secret|passw|credential)"
+    r"|(key|token|secret|passw|credential)[^\n]{0,80}(os\.environ|getenv)\b)",
+    re.I,
 )
 DESTRUCTIVE_PATTERN = re.compile(
     r"\b(rm\s+-rf\s+(/|~|\$HOME)|chmod\s+777|dd\s+if=|mkfs\.|shutdown\b)", re.I
@@ -28,7 +31,7 @@ EXFIL_PATTERN = re.compile(
 )
 UNICODE_PATTERN = re.compile(r"[\u200b\u200c\u200d\ufeff\u202a-\u202e]")
 OBFUSCATION_PATTERN = re.compile(
-    r"(base64\s+-d|fromCharCode|eval\(|exec\(|compile\(|atob\(|b64decode)", re.I
+    r"(base64\s+-d|fromCharCode|(?<![\w.])eval\(|(?<![\w.])exec\(|atob\(|b64decode)", re.I
 )
 
 
@@ -151,7 +154,8 @@ class PythonDangerVisitor(ast.NodeVisitor):
             name = node.func.attr
         elif isinstance(node.func, ast.Name):
             name = node.func.id
-        if name in {"eval", "exec", "compile"}:
+        # Only bare calls: re.compile()/obj.eval() are attribute calls, not builtins.
+        if isinstance(node.func, ast.Name) and name in {"eval", "exec", "compile"}:
             self.findings.append(
                 _finding(
                     "PY_DYNAMIC_EXEC",

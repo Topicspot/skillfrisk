@@ -113,9 +113,24 @@ Current rules detect:
 
 ## False-positive control
 
-`tests/corpus/` vendors three popular real-world skills from
+`tests/corpus/` vendors 10 full skills (92 files, including bundled Python/JS scripts) from
 [anthropics/skills](https://github.com/anthropics/skills); the test suite fails if skillscan
-reports a single high-severity finding on any of them.
+reports a single high-severity finding on any of them. Current state: 0 findings on the
+whole corpus, about 45 ms per skill on a laptop-class machine.
+
+## Alternatives / why another one
+
+Several scanners target the same problem. Use whichever fits your workflow:
+
+- [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) - LangGraph pipeline, static checks plus optional LLM semantic analysis, SARIF output.
+- [snyk/agent-scan](https://github.com/snyk/agent-scan) - discovers agents, skills and MCP servers installed on your machine and checks them via Snyk's verification service.
+- [cisco-ai-defense/skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) - YAML/YARA pattern engine with optional LLM, VirusTotal and API integrations; CLI, library and REST API.
+- [NMitchem/SkillScan](https://github.com/NMitchem/SkillScan) - static analysis plus LLM behavioral prediction and Docker sandbox execution (owns the `skillscan` name on PyPI).
+
+This project stays deliberately small: no LLM calls, no network access, no Docker requirement,
+no API keys. One dependency-light Python package that runs in milliseconds, so it fits in a
+pre-commit hook, and a public regression corpus of real skills that keeps high-severity
+false positives at zero by construction.
 
 ## Limitations
 
