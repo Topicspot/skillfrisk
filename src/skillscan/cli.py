@@ -18,7 +18,7 @@ def main() -> None:
 
 @app.command()
 def scan(
-    path: Annotated[Path, typer.Argument(help="Skill/MCP directory to scan.")] = Path("."),
+    path: Annotated[Path, typer.Argument(help="Skill/MCP directory to scan.")] = Path(),
     json_output: Annotated[bool, typer.Option("--json", help="Print JSON report.")] = False,
     html_output: Annotated[Path | None, typer.Option("--html", help="Write HTML report.")] = None,
     no_fail_on_high: Annotated[

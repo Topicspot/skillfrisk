@@ -27,7 +27,13 @@ def print_terminal(result: ScanResult) -> None:
     for col in ["Severity", "Rule", "File", "Line", "Snippet"]:
         table.add_column(col)
     for finding in result.findings:
-        table.add_row(finding.severity.value, finding.rule_id, finding.path, str(finding.line), finding.snippet)
+        table.add_row(
+            finding.severity.value,
+            finding.rule_id,
+            finding.path,
+            str(finding.line),
+            finding.snippet,
+        )
     console.print(table)
     if result.failed:
         console.print("[bold red]High-risk findings detected.[/bold red]")
@@ -37,10 +43,12 @@ def print_terminal(result: ScanResult) -> None:
 
 def result_to_html(result: ScanResult) -> str:
     rows = "\n".join(
-        "<tr>" + "".join(
+        "<tr>"
+        + "".join(
             f"<td>{html.escape(str(value))}</td>"
             for value in [f.severity.value, f.rule_id, f.path, f.line, f.snippet, f.recommendation]
-        ) + "</tr>"
+        )
+        + "</tr>"
         for f in result.findings
     )
     return f"""<!doctype html>

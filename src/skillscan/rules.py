@@ -17,11 +17,19 @@ PROMPT_INJECTION_PATTERNS = [
     r"do not tell (the )?user",
 ]
 SHELL_PIPE_PATTERN = re.compile(r"(curl|wget)\b[^\n|;]*(\||;|&&)\s*(sh|bash|python)", re.I)
-SECRET_READ_PATTERN = re.compile(r"(~/(\.ssh|\.aws|\.config)|/etc/passwd|\.env\b|os\.environ|getenv)", re.I)
-DESTRUCTIVE_PATTERN = re.compile(r"\b(rm\s+-rf\s+(/|~|\$HOME)|chmod\s+777|dd\s+if=|mkfs\.|shutdown\b)", re.I)
-EXFIL_PATTERN = re.compile(r"(curl|wget|requests\.|fetch\()(.|\n){0,120}(token|secret|password|api[_-]?key|\.env)", re.I)
+SECRET_READ_PATTERN = re.compile(
+    r"(~/(\.ssh|\.aws|\.config)|/etc/passwd|\.env\b|os\.environ|getenv)", re.I
+)
+DESTRUCTIVE_PATTERN = re.compile(
+    r"\b(rm\s+-rf\s+(/|~|\$HOME)|chmod\s+777|dd\s+if=|mkfs\.|shutdown\b)", re.I
+)
+EXFIL_PATTERN = re.compile(
+    r"(curl|wget|requests\.|fetch\()(.|\n){0,120}(token|secret|password|api[_-]?key|\.env)", re.I
+)
 UNICODE_PATTERN = re.compile(r"[\u200b\u200c\u200d\ufeff\u202a-\u202e]")
-OBFUSCATION_PATTERN = re.compile(r"(base64\s+-d|fromCharCode|eval\(|exec\(|compile\(|atob\(|b64decode)", re.I)
+OBFUSCATION_PATTERN = re.compile(
+    r"(base64\s+-d|fromCharCode|eval\(|exec\(|compile\(|atob\(|b64decode)", re.I
+)
 
 
 def iter_scannable_files(root: Path) -> Iterable[Path]:
@@ -34,7 +42,9 @@ def iter_scannable_files(root: Path) -> Iterable[Path]:
             yield path
 
 
-def _finding(rule_id: str, title: str, severity: Severity, path: Path, line: int, snippet: str, rec: str) -> Finding:
+def _finding(
+    rule_id: str, title: str, severity: Severity, path: Path, line: int, snippet: str, rec: str
+) -> Finding:
     return Finding(rule_id, title, severity, str(path), line, snippet.strip()[:220], rec)
 
 
@@ -43,19 +53,89 @@ def scan_text(path: Path, text: str) -> list[Finding]:
     for i, line in enumerate(text.splitlines(), start=1):
         lower = line.lower()
         if any(re.search(pattern, lower, re.I) for pattern in PROMPT_INJECTION_PATTERNS):
-            findings.append(_finding("PROMPT_INJECTION", "Prompt-injection instruction", Severity.HIGH, path, i, line, "Remove hidden instructions and keep skills declarative."))
+            findings.append(
+                _finding(
+                    "PROMPT_INJECTION",
+                    "Prompt-injection instruction",
+                    Severity.HIGH,
+                    path,
+                    i,
+                    line,
+                    "Remove hidden instructions and keep skills declarative.",
+                )
+            )
         if SHELL_PIPE_PATTERN.search(line):
-            findings.append(_finding("REMOTE_CODE_EXEC", "Remote script piped into interpreter", Severity.CRITICAL, path, i, line, "Pin and inspect downloads; never pipe network output directly into shells."))
+            findings.append(
+                _finding(
+                    "REMOTE_CODE_EXEC",
+                    "Remote script piped into interpreter",
+                    Severity.CRITICAL,
+                    path,
+                    i,
+                    line,
+                    "Pin and inspect downloads; never pipe network output directly into shells.",
+                )
+            )
         if SECRET_READ_PATTERN.search(line):
-            findings.append(_finding("SECRET_ACCESS", "Reads secrets or sensitive local files", Severity.HIGH, path, i, line, "Request explicit narrow inputs instead of reading global secret stores."))
+            findings.append(
+                _finding(
+                    "SECRET_ACCESS",
+                    "Reads secrets or sensitive local files",
+                    Severity.HIGH,
+                    path,
+                    i,
+                    line,
+                    "Request explicit narrow inputs instead of reading global secret stores.",
+                )
+            )
         if DESTRUCTIVE_PATTERN.search(line):
-            findings.append(_finding("DESTRUCTIVE_COMMAND", "Potentially destructive shell command", Severity.HIGH, path, i, line, "Gate irreversible operations behind explicit user confirmation."))
+            findings.append(
+                _finding(
+                    "DESTRUCTIVE_COMMAND",
+                    "Potentially destructive shell command",
+                    Severity.HIGH,
+                    path,
+                    i,
+                    line,
+                    "Gate irreversible operations behind explicit user confirmation.",
+                )
+            )
         if EXFIL_PATTERN.search(line):
-            findings.append(_finding("SECRET_EXFIL", "Possible secret exfiltration", Severity.CRITICAL, path, i, line, "Do not transmit secrets; redact and keep scans local by default."))
+            findings.append(
+                _finding(
+                    "SECRET_EXFIL",
+                    "Possible secret exfiltration",
+                    Severity.CRITICAL,
+                    path,
+                    i,
+                    line,
+                    "Do not transmit secrets; redact and keep scans local by default.",
+                )
+            )
         if UNICODE_PATTERN.search(line):
-            findings.append(_finding("HIDDEN_UNICODE", "Hidden or bidirectional Unicode control character", Severity.MEDIUM, path, i, line, "Remove invisible characters that can hide malicious text."))
+            findings.append(
+                _finding(
+                    "HIDDEN_UNICODE",
+                    "Hidden or bidirectional Unicode control character",
+                    Severity.MEDIUM,
+                    path,
+                    i,
+                    line,
+                    "Remove invisible characters that can hide malicious text.",
+                )
+            )
         if OBFUSCATION_PATTERN.search(line):
-            findings.append(_finding("OBFUSCATION", "Obfuscated dynamic code execution", Severity.HIGH, path, i, line, "Avoid eval/exec/base64 loaders in skills and MCP server hooks."))
+            findings.append(
+                _finding(
+                    "OBFUSCATION",
+                    "Obfuscated dynamic code execution",
+                    Severity.HIGH,
+                    path,
+                    i,
+                    line,
+                    "Avoid eval/exec/base64 loaders in skills and MCP server hooks.",
+                )
+            )
     return findings
 
 
@@ -65,18 +145,38 @@ class PythonDangerVisitor(ast.NodeVisitor):
         self.findings: list[Finding] = []
         self._source = ""
 
-    def visit_Call(self, node: ast.Call) -> None:  # noqa: N802
+    def visit_Call(self, node: ast.Call) -> None:
         name = ""
         if isinstance(node.func, ast.Attribute):
             name = node.func.attr
         elif isinstance(node.func, ast.Name):
             name = node.func.id
         if name in {"eval", "exec", "compile"}:
-            self.findings.append(_finding("PY_DYNAMIC_EXEC", "Python dynamic execution", Severity.HIGH, self.path, node.lineno, name, "Replace dynamic execution with explicit parsing or dispatch."))
+            self.findings.append(
+                _finding(
+                    "PY_DYNAMIC_EXEC",
+                    "Python dynamic execution",
+                    Severity.HIGH,
+                    self.path,
+                    node.lineno,
+                    name,
+                    "Replace dynamic execution with explicit parsing or dispatch.",
+                )
+            )
         if name in {"system", "popen", "run", "call"}:
             rendered = ast.get_source_segment(self._source, node) or name
             if re.search(r"shell\s*=\s*True", rendered):
-                self.findings.append(_finding("PY_SHELL_TRUE", "subprocess with shell=True", Severity.HIGH, self.path, node.lineno, rendered, "Pass argv lists and avoid shell=True."))
+                self.findings.append(
+                    _finding(
+                        "PY_SHELL_TRUE",
+                        "subprocess with shell=True",
+                        Severity.HIGH,
+                        self.path,
+                        node.lineno,
+                        rendered,
+                        "Pass argv lists and avoid shell=True.",
+                    )
+                )
         self.generic_visit(node)
 
     def scan(self, source: str) -> list[Finding]:
@@ -103,7 +203,27 @@ def scan_mcp_manifest(path: Path, text: str) -> list[Finding]:
     rendered = str(data).lower()
     findings: list[Finding] = []
     if any(word in rendered for word in ["delete", "write_file", "exec", "shell", "terminal"]):
-        findings.append(_finding("MCP_DANGEROUS_TOOLS", "MCP manifest exposes dangerous tools", Severity.MEDIUM, path, 1, "manifest contains write/delete/exec-like tools", "Document permissions and require confirmation for destructive tools."))
+        findings.append(
+            _finding(
+                "MCP_DANGEROUS_TOOLS",
+                "MCP manifest exposes dangerous tools",
+                Severity.MEDIUM,
+                path,
+                1,
+                "manifest contains write/delete/exec-like tools",
+                "Document permissions and require confirmation for destructive tools.",
+            )
+        )
     if "*" in rendered and any(word in rendered for word in ["scope", "permission", "allow"]):
-        findings.append(_finding("MCP_WILDCARD_PERMISSION", "MCP manifest uses wildcard permissions", Severity.HIGH, path, 1, "wildcard permission", "Replace wildcard grants with least-privilege scopes."))
+        findings.append(
+            _finding(
+                "MCP_WILDCARD_PERMISSION",
+                "MCP manifest uses wildcard permissions",
+                Severity.HIGH,
+                path,
+                1,
+                "wildcard permission",
+                "Replace wildcard grants with least-privilege scopes.",
+            )
+        )
     return findings

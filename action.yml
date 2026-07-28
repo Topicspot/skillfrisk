@@ -1,0 +1,22 @@
+name: "skillscan"
+description: "Static security scan for AI-agent skills and MCP servers (prompt injection, secret access, RCE patterns)."
+branding:
+  icon: "shield"
+  color: "red"
+inputs:
+  path:
+    description: "Path to scan"
+    required: false
+    default: "."
+  args:
+    description: "Extra CLI arguments (e.g. --json)"
+    required: false
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+    - name: Run skillscan
+      shell: bash
+      run: uvx --from "git+https://github.com/Topicspot/skillscan" skillscan scan "${{ inputs.path }}" ${{ inputs.args }}

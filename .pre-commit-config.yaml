@@ -1,0 +1,9 @@
+# The hook runs scripts/check.sh — the exact same list as CI (.github/workflows/ci.yml).
+repos:
+  - repo: local
+    hooks:
+      - id: quality-gate
+        name: quality gate (identical to CI)
+        entry: scripts/check.sh
+        language: system
+        pass_filenames: false

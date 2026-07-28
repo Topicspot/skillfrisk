@@ -6,10 +6,17 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [{name = "Topicspot"}]
-dependencies = ["typer==0.12.5", "rich==13.9.4", "pyyaml==6.0.2", "click==8.1.7"]
+dependencies = ["typer>=0.16", "rich>=13.9", "pyyaml>=6.0.2", "click>=8.3.3"]
 
 [project.optional-dependencies]
-dev = ["pytest==8.3.4", "ruff==0.8.4"]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.14",
+    "mypy>=1.14",
+    "types-PyYAML",
+    "vulture>=2.13",
+    "pip-audit>=2.7",
+]
 
 [project.scripts]
 skillscan = "skillscan.cli:app"
@@ -20,12 +27,21 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
+extend-exclude = ["tests/corpus"]
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B"]
+select = ["F", "E", "W", "I", "UP", "B", "SIM", "ARG", "PTH", "RUF"]
 ignore = ["E501"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.mypy]
+strict = true
+files = ["src"]
+
+[tool.vulture]
+paths = ["src"]
+min_confidence = 80
