@@ -44,20 +44,26 @@ def corpus_dirs() -> list[Path]:
     return sorted(d for d in CORPUS.iterdir() if d.is_dir())
 
 
-def run_skillfrisk() -> tuple[int, int, float]:
+PerSkill = dict[str, tuple[int, int]]
+
+
+def run_skillfrisk() -> tuple[PerSkill, float]:
     sys.path.insert(0, str(REPO / "src"))
     from skillfrisk.scanner import scan_path
 
+    per: PerSkill = {}
     start = time.monotonic()
-    results = [scan_path(d) for d in corpus_dirs()]
+    for d in corpus_dirs():
+        result = scan_path(d)
+        highs = sum(1 for f in result.findings if f.severity.upper() in HIGH)
+        per[d.name] = (len(result.findings), highs)
     elapsed = time.monotonic() - start
-    findings = [f for r in results for f in r.findings]
-    high = [f for f in findings if f.severity.upper() in HIGH]
-    return len(findings), len(high), elapsed
+    return per, elapsed
 
 
-def run_cisco(env: Path) -> tuple[int, int, float]:
-    total, high, elapsed = 0, 0, 0.0
+def run_cisco(env: Path) -> tuple[PerSkill, float]:
+    per: PerSkill = {}
+    elapsed = 0.0
     for d in corpus_dirs():
         out = ENVS / f"cisco_{d.name}.json"
         start = time.monotonic()
@@ -75,13 +81,14 @@ def run_cisco(env: Path) -> tuple[int, int, float]:
         )
         elapsed += time.monotonic() - start
         data = json.loads(out.read_text())
-        total += int(data["findings_count"])
-        high += sum(1 for f in data["findings"] if str(f.get("severity", "")).upper() in HIGH)
-    return total, high, elapsed
+        highs = sum(1 for f in data["findings"] if str(f.get("severity", "")).upper() in HIGH)
+        per[d.name] = (int(data["findings_count"]), highs)
+    return per, elapsed
 
 
-def run_nvidia(env: Path) -> tuple[int, int, float]:
-    total, high, elapsed = 0, 0, 0.0
+def run_nvidia(env: Path) -> tuple[PerSkill, float]:
+    per: PerSkill = {}
+    elapsed = 0.0
     for d in corpus_dirs():
         out = ENVS / f"nvidia_{d.name}.json"
         start = time.monotonic()
@@ -101,9 +108,9 @@ def run_nvidia(env: Path) -> tuple[int, int, float]:
         elapsed += time.monotonic() - start
         data = json.loads(out.read_text())
         issues = data["issues"]
-        total += len(issues)
-        high += sum(1 for i in issues if str(i.get("severity", "")).upper() in HIGH)
-    return total, high, elapsed
+        highs = sum(1 for i in issues if str(i.get("severity", "")).upper() in HIGH)
+        per[d.name] = (len(issues), highs)
+    return per, elapsed
 
 
 def main() -> None:
@@ -115,8 +122,17 @@ def main() -> None:
     rows.append(("skillspector 2.5.0 (--no-llm)", *run_nvidia(make_env("nvidia", NVIDIA_SPEC))))
     print("| Scanner | Findings | High/Critical | Seconds per skill |")
     print("|---|---|---|---|")
-    for name, total, high, elapsed in rows:
+    for name, per, elapsed in rows:
+        total = sum(f for f, _ in per.values())
+        high = sum(h for _, h in per.values())
         print(f"| {name} | {total} | {high} | {elapsed / n:.2f} |")
+    print("\nPer-skill findings, shown as total (high/critical):\n")
+    names = [name for name, _, _ in rows]
+    print("| Skill | " + " | ".join(names) + " |")
+    print("|---" * (len(names) + 1) + "|")
+    for skill in sorted(rows[0][1]):
+        cells = [f"{per[skill][0]} ({per[skill][1]})" for _, per, _ in rows]
+        print(f"| {skill} | " + " | ".join(cells) + " |")
     print(
         "\nNote: snyk/agent-scan is excluded because it scans agent configurations"
         " installed on the machine via a cloud service, not a repository directory."
