@@ -1,7 +1,7 @@
 """False-positive regression tests on real, popular, benign skills.
 
 The corpus is vendored unmodified from anthropics/skills (see tests/corpus/NOTICE.md).
-skillscan must not raise high-severity findings on any of them.
+skillfrisk must not raise high-severity findings on any of them.
 """
 
 from __future__ import annotations
@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from skillscan.scanner import scan_path
+from skillfrisk.scanner import scan_path
 
 CORPUS = Path(__file__).parent / "corpus"
 SKILLS = sorted(d.name for d in CORPUS.iterdir() if d.is_dir())

@@ -1,4 +1,4 @@
-name: "skillscan"
+name: "skillfrisk"
 description: "Static security scan for AI-agent skills and MCP servers (prompt injection, secret access, RCE patterns)."
 branding:
   icon: "shield"
@@ -17,6 +17,6 @@ runs:
   steps:
     - name: Install uv
       uses: astral-sh/setup-uv@v4
-    - name: Run skillscan
+    - name: Run skillfrisk
       shell: bash
-      run: uvx --from "git+https://github.com/Topicspot/skillscan" skillscan scan "${{ inputs.path }}" ${{ inputs.args }}
+      run: uvx --from "git+https://github.com/Topicspot/skillfrisk" skillfrisk scan "${{ inputs.path }}" ${{ inputs.args }}

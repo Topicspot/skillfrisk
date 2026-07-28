@@ -5,5 +5,5 @@
     "MD012": false,
     "MD036": false
   },
-  "ignores": [".venv/**", "tests/fixtures/**", "tests/corpus/**", "CHANGELOG.md", "lychee-*/**", "gitleaks*/**"]
+  "ignores": [".venv/**", "benchmarks/.envs/**", "tests/fixtures/**", "tests/corpus/**", "CHANGELOG.md", "lychee-*/**", "gitleaks*/**"]
 }

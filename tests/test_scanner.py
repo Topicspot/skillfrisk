@@ -5,9 +5,9 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from skillscan.cli import app
-from skillscan.report import result_to_json
-from skillscan.scanner import scan_path
+from skillfrisk.cli import app
+from skillfrisk.report import result_to_json
+from skillfrisk.scanner import scan_path
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

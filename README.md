@@ -1,10 +1,10 @@
-# skillscan
+# skillfrisk
 
-[![CI](https://github.com/Topicspot/skillscan/actions/workflows/ci.yml/badge.svg)](https://github.com/Topicspot/skillscan/actions/workflows/ci.yml)
+[![CI](https://github.com/Topicspot/skillfrisk/actions/workflows/ci.yml/badge.svg)](https://github.com/Topicspot/skillfrisk/actions/workflows/ci.yml)
 
-`skillscan` is a static security scanner for AI-agent skills and MCP servers.
+`skillfrisk` is a static security scanner for AI-agent skills and MCP servers.
 
-![skillscan demo](assets/demo.svg)
+![skillfrisk demo](assets/demo.svg)
 
 ## Problem
 
@@ -12,7 +12,7 @@ AI agents increasingly install third-party skills, MCP servers, hooks, and scrip
 
 ## Why it matters
 
-Generic SAST tools are useful, but they do not understand agent-specific risk: hidden instructions in Markdown, `SKILL.md` frontmatter, MCP tool permissions, or prompt-injection language embedded in docs. `skillscan` is a pre-install and CI gate for that niche.
+Generic SAST tools are useful, but they do not understand agent-specific risk: hidden instructions in Markdown, `SKILL.md` frontmatter, MCP tool permissions, or prompt-injection language embedded in docs. `skillfrisk` is a pre-install and CI gate for that niche.
 
 ## Architecture
 
@@ -27,7 +27,7 @@ CLI (Typer)
 ## Demo
 
 ```bash
-uv run skillscan scan tests/fixtures/malicious_skill --json
+uv run skillfrisk scan tests/fixtures/malicious_skill --json
 ```
 
 Example finding:
@@ -43,28 +43,28 @@ Example finding:
 ## Quickstart
 
 ```bash
-pipx install git+https://github.com/Topicspot/skillscan.git
-skillscan scan path/to/skill-or-mcp --html reports/skillscan.html
+pipx install git+https://github.com/Topicspot/skillfrisk.git
+skillfrisk scan path/to/skill-or-mcp --html reports/skillfrisk.html
 ```
 
 For local development:
 
 ```bash
-git clone https://github.com/Topicspot/skillscan.git
-cd skillscan && uv sync --extra dev
-uv run skillscan scan tests/fixtures/malicious_skill --json
+git clone https://github.com/Topicspot/skillfrisk.git
+cd skillfrisk && uv sync --extra dev
+uv run skillfrisk scan tests/fixtures/malicious_skill --json
 ```
 
 Install as an agent skill (teaches your agent to vet skills/MCP servers before installing them):
 
 ```bash
-npx skills add Topicspot/skillscan
+npx skills add Topicspot/skillfrisk
 ```
 
 Use in CI as a GitHub Action:
 
 ```yaml
-- uses: Topicspot/skillscan@main
+- uses: Topicspot/skillfrisk@main
   with:
     path: "."
 ```
@@ -72,8 +72,8 @@ Use in CI as a GitHub Action:
 Or with Docker:
 
 ```bash
-docker build -t skillscan .
-docker run --rm -v "$PWD:/scan" skillscan scan /scan --json
+docker build -t skillfrisk .
+docker run --rm -v "$PWD:/scan" skillfrisk scan /scan --json
 ```
 
 The command exits with code `2` when high or critical findings are present.
@@ -83,19 +83,19 @@ The command exits with code `2` when high or critical findings are present.
 Scan a safe skill:
 
 ```bash
-uv run skillscan scan tests/fixtures/benign_skill
+uv run skillfrisk scan tests/fixtures/benign_skill
 ```
 
 Scan an MCP manifest:
 
 ```bash
-uv run skillscan scan tests/fixtures/mcp_server --json
+uv run skillfrisk scan tests/fixtures/mcp_server --json
 ```
 
 Write an HTML report:
 
 ```bash
-uv run skillscan scan . --html reports/report.html --no-fail-on-high
+uv run skillfrisk scan . --html reports/report.html --no-fail-on-high
 ```
 
 ## Rule coverage
@@ -114,9 +114,11 @@ Current rules detect:
 ## False-positive control
 
 `tests/corpus/` vendors 10 full skills (92 files, including bundled Python/JS scripts) from
-[anthropics/skills](https://github.com/anthropics/skills); the test suite fails if skillscan
+[anthropics/skills](https://github.com/anthropics/skills); the test suite fails if skillfrisk
 reports a single high-severity finding on any of them. Current state: 0 findings on the
-whole corpus, about 45 ms per skill on a laptop-class machine.
+whole corpus, about 45 ms per skill on a laptop-class machine. To reproduce the comparison
+with other scanners on the same corpus, run `uv run python benchmarks/run.py`; pinned tool
+versions and the latest results are in [benchmarks/](benchmarks/results-2026-07-28.md).
 
 ## Alternatives / why another one
 

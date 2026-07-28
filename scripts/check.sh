@@ -17,14 +17,14 @@ step "mypy --strict" uv run mypy
 step "pytest" uv run python -m pytest
 step "vulture" uv run vulture
 step "gitleaks" gitleaks detect --source . --redact
-export_req() { uv export --no-emit-project --extra dev -o /tmp/skillscan-req.txt -q; }
-pip_audit() { export_req && uv run pip-audit --no-deps -r /tmp/skillscan-req.txt; }
+export_req() { uv export --no-emit-project --extra dev -o /tmp/skillfrisk-req.txt -q; }
+pip_audit() { export_req && uv run pip-audit --no-deps -r /tmp/skillfrisk-req.txt; }
 step "pip-audit" pip_audit
 step "markdownlint" npx -y markdownlint-cli2 "**/*.md"
 step "lychee" lychee --no-progress --include-fragments README.md
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-  step "docker build" docker build -t skillscan:ci .
-  step "docker run demo" docker run --rm -v "$PWD/tests/fixtures/mcp_server:/scan" skillscan:ci scan /scan --json --no-fail-on-high
+  step "docker build" docker build -t skillfrisk:ci .
+  step "docker run demo" docker run --rm -v "$PWD/tests/fixtures/mcp_server:/scan" skillfrisk:ci scan /scan --json --no-fail-on-high
 else
   echo "==> docker: SKIPPED (no docker daemon here; enforced in CI)"
 fi

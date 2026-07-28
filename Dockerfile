@@ -5,5 +5,5 @@ COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src ./src
 RUN uv sync --frozen --no-dev
 
-ENTRYPOINT ["uv", "run", "--no-sync", "skillscan"]
+ENTRYPOINT ["uv", "run", "--no-sync", "skillfrisk"]
 CMD ["--help"]

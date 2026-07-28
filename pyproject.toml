@@ -1,5 +1,5 @@
 [project]
-name = "skillscan"
+name = "skillfrisk"
 version = "0.1.0"
 description = "Static security scanner for AI-agent skills and MCP servers."
 readme = "README.md"
@@ -19,7 +19,7 @@ dev = [
 ]
 
 [project.scripts]
-skillscan = "skillscan.cli:app"
+skillfrisk = "skillfrisk.cli:app"
 
 [tool.pytest.ini_options]
 addopts = "-q"

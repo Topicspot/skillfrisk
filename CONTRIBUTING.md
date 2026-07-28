@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving `skillscan`.
+Thanks for improving `skillfrisk`.
 
 1. Keep the scanner offline-first: no telemetry, no network calls during scans.
 2. Add a fixture and a meaningful test for every rule change.
