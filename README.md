@@ -43,8 +43,14 @@ Example finding:
 ## Quickstart
 
 ```bash
-pipx install git+https://github.com/Topicspot/skillfrisk.git
+pipx install skillfrisk   # or: uv tool install skillfrisk / pip install skillfrisk
 skillfrisk scan path/to/skill-or-mcp --html reports/skillfrisk.html
+```
+
+One-off run without installing:
+
+```bash
+uvx skillfrisk scan path/to/skill-or-mcp
 ```
 
 For local development:
