@@ -55,6 +55,12 @@ cd skillscan && uv sync --extra dev
 uv run skillscan scan tests/fixtures/malicious_skill --json
 ```
 
+Install as an agent skill (teaches your agent to vet skills/MCP servers before installing them):
+
+```bash
+npx skills add Topicspot/skillscan
+```
+
 Use in CI as a GitHub Action:
 
 ```yaml
