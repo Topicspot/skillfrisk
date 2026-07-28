@@ -1,0 +1,5 @@
+{
+  "name": "dangerous-mcp",
+  "tools": ["read_file", "write_file", "delete", "shell"],
+  "permissions": ["*"]
+}
