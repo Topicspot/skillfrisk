@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.2.2 - 2026-07-29
+
+- Fixed `--version`: it printed 0.2.0 on a 0.2.1 install because the version string was
+  duplicated in `__init__.py`. The package version is now read from installed metadata and a
+  test fails if it ever drifts from pyproject.toml.
+- Added README translations (Русский, 简体中文, Español, Português) with a language switcher
+  and a badge row.
+
 ## 0.2.1 - 2026-07-29
 
 - Added SARIF output (`--sarif`) for GitHub code scanning integrations.

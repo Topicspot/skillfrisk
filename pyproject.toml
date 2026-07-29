@@ -1,6 +1,6 @@
 [project]
 name = "skillfrisk"
-version = "0.2.1"
+version = "0.2.2"
 description = "Static security scanner for AI-agent skills and MCP servers."
 readme = "README.md"
 requires-python = ">=3.11"
