@@ -6,7 +6,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from skillfrisk.cli import app
-from skillfrisk.report import result_to_json
+from skillfrisk.report import result_to_json, result_to_sarif
 from skillfrisk.scanner import scan_path
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -55,3 +55,37 @@ def test_cli_returns_nonzero_for_high_risk_findings() -> None:
     completed = runner.invoke(app, ["scan", str(FIXTURES / "malicious_skill"), "--json"])
     assert completed.exit_code == 2
     assert "PROMPT_INJECTION" in completed.output
+
+
+def test_sarif_report_is_github_code_scanning_compatible() -> None:
+    result = scan_path(FIXTURES / "malicious_skill")
+    payload = json.loads(result_to_sarif(result))
+    assert payload["version"] == "2.1.0"
+    run = payload["runs"][0]
+    assert run["tool"]["driver"]["name"] == "skillfrisk"
+    assert any(item["ruleId"] == "REMOTE_CODE_EXEC" for item in run["results"])
+
+
+def test_cli_version_option() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(app, ["--version"])
+    assert completed.exit_code == 0
+    assert completed.output.startswith("skillfrisk ")
+
+
+def test_cli_writes_sarif_report(tmp_path: Path) -> None:
+    sarif_path = tmp_path / "skillfrisk.sarif"
+    runner = CliRunner()
+    completed = runner.invoke(
+        app,
+        [
+            "scan",
+            str(FIXTURES / "malicious_skill"),
+            "--sarif",
+            str(sarif_path),
+            "--no-fail-on-high",
+        ],
+    )
+    assert completed.exit_code == 0
+    payload = json.loads(sarif_path.read_text(encoding="utf-8"))
+    assert payload["runs"][0]["results"]

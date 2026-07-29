@@ -21,6 +21,61 @@ def result_to_json(result: ScanResult) -> str:
     return json.dumps(payload, indent=2, ensure_ascii=False)
 
 
+def result_to_sarif(result: ScanResult) -> str:
+    rules_by_id = {}
+    results = []
+    severity_to_level = {
+        "critical": "error",
+        "high": "error",
+        "medium": "warning",
+        "low": "note",
+    }
+    for finding in result.findings:
+        rules_by_id[finding.rule_id] = {
+            "id": finding.rule_id,
+            "name": finding.title,
+            "shortDescription": {"text": finding.title},
+            "help": {"text": finding.recommendation},
+            "properties": {"severity": finding.severity.value},
+        }
+        results.append(
+            {
+                "ruleId": finding.rule_id,
+                "level": severity_to_level[finding.severity.value],
+                "message": {"text": f"{finding.title}: {finding.snippet}"},
+                "locations": [
+                    {
+                        "physicalLocation": {
+                            "artifactLocation": {"uri": finding.path},
+                            "region": {"startLine": finding.line},
+                        }
+                    }
+                ],
+                "properties": {
+                    "severity": finding.severity.value,
+                    "recommendation": finding.recommendation,
+                },
+            }
+        )
+    payload = {
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {
+                        "name": "skillfrisk",
+                        "informationUri": "https://github.com/Topicspot/skillfrisk",
+                        "rules": list(rules_by_id.values()),
+                    }
+                },
+                "results": results,
+            }
+        ],
+    }
+    return json.dumps(payload, indent=2, ensure_ascii=False)
+
+
 def print_terminal(result: ScanResult) -> None:
     console = Console()
     table = Table(
