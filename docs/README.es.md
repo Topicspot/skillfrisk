@@ -9,6 +9,8 @@
 
 `skillfrisk` es un escáner de seguridad estático para skills de agentes de IA y servidores MCP.
 
+![skillfrisk analiza una skill maliciosa y una limpia](https://raw.githubusercontent.com/Topicspot/skillfrisk/main/assets/demo.gif)
+
 ## Por qué
 
 Los agentes instalan skills, servidores MCP, hooks y scripts de terceros que leen archivos,

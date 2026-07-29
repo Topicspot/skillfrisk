@@ -76,16 +76,35 @@ def result_to_sarif(result: ScanResult) -> str:
     return json.dumps(payload, indent=2, ensure_ascii=False)
 
 
+SEVERITY_STYLE = {
+    "critical": "bold red",
+    "high": "red",
+    "medium": "yellow",
+    "low": "cyan",
+}
+
+
 def print_terminal(result: ScanResult) -> None:
     console = Console()
+    files = result.files_scanned
+    if not result.findings:
+        console.print(
+            f"skillfrisk: {files} file(s) scanned, 0 findings, risk {result.risk_score}/100",
+            highlight=False,
+        )
+        console.print("[bold green]No high-risk findings detected.[/bold green]")
+        return
+
     table = Table(
-        title=f"skillfrisk: {result.risk_score}/100 risk, {len(result.findings)} findings"
+        title=f"skillfrisk: {result.risk_score}/100 risk, "
+        f"{len(result.findings)} findings in {files} file(s)"
     )
     for col in ["Severity", "Rule", "File", "Line", "Snippet"]:
         table.add_column(col)
     for finding in result.findings:
+        severity = finding.severity.value
         table.add_row(
-            finding.severity.value,
+            f"[{SEVERITY_STYLE[severity]}]{severity}[/]",
             finding.rule_id,
             finding.path,
             str(finding.line),

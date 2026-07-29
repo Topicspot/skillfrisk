@@ -9,6 +9,8 @@
 
 `skillfrisk` 是面向 AI 智能体技能（skills）与 MCP 服务器的静态安全扫描器。
 
+![skillfrisk 扫描一个恶意技能和一个干净技能](https://raw.githubusercontent.com/Topicspot/skillfrisk/main/assets/demo.gif)
+
 ## 背景
 
 智能体会安装第三方技能、MCP 服务器、钩子和脚本，它们可以读取文件、访问网络并影响工具调用。

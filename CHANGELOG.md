@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.3 - 2026-07-29
+
+- README shows a real terminal recording instead of a hand-drawn SVG. It is generated from
+  live runs by `scripts/demo_gif.py`, so it cannot drift away from the actual output.
+- A clean scan prints a one line summary instead of an empty table.
+- Severity is coloured in the findings table, and the table title reports how many files were
+  scanned.
+
 ## Unreleased
 
 ## 0.2.2 - 2026-07-29

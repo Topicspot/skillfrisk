@@ -89,3 +89,20 @@ def test_cli_writes_sarif_report(tmp_path: Path) -> None:
     assert completed.exit_code == 0
     payload = json.loads(sarif_path.read_text(encoding="utf-8"))
     assert payload["runs"][0]["results"]
+
+
+def test_clean_scan_prints_a_summary_line_not_an_empty_table() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(app, ["scan", str(FIXTURES / "benign_skill")])
+    assert completed.exit_code == 0
+    assert "Severity" not in completed.output
+    assert "0 findings" in completed.output
+    assert "No high-risk findings detected." in completed.output
+
+
+def test_findings_table_reports_the_file_count() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(app, ["scan", str(FIXTURES / "malicious_skill")])
+    assert completed.exit_code == 2
+    assert "file(s)" in completed.output
+    assert "PROMPT_INJECTION" in completed.output
