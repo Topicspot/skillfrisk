@@ -51,6 +51,13 @@ uvx skillfrisk scan path/to/skill-or-mcp
 - `eval`/`exec` 以及 `subprocess(..., shell=True)`；
 - MCP 清单中的通配符权限与危险工具。
 
+## 更新门禁：`skillfrisk diff`
+
+技能管理器只比较文件夹哈希，不会展示指令内容的变化。`skillfrisk diff 旧目录/ 新目录/`
+比较两个本地版本：新增的风险、权限变化（`allowed-tools`、shell 命令、网络主机）以及
+结论；发现新风险时退出码为 `2`。`--fail-on any-change` 在权限面扩大时同样使门禁失败。
+发现按语义匹配，文本移动不会产生虚假的"新"告警。
+
 ## 误报控制
 
 `tests/corpus/` 收录了来自 [anthropics/skills](https://github.com/anthropics/skills) 的 10 个

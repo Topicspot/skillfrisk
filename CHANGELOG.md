@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 - 2026-07-29
+
+- New `skillfrisk diff OLD NEW` command: compares two local versions of a skill and reports new, resolved, and carried-over findings plus the capability delta (`allowed-tools`, shell commands, network hosts) and per-file changes.
+- Findings are matched semantically (rule, file, normalized snippet), so shifted text does not produce false new findings.
+- `--fail-on critical|high|medium|low|any-change`, `--no-fail`, `--show-resolved`, `--json`, and `--html` for the diff report; exit code `2` signals new risk.
+- README documents the update gate, including what the diff cannot catch.
+
 ## 0.2.4 - 2026-07-29
 
 - Fixed a silent false negative: pointing the scanner at a single file scanned nothing and

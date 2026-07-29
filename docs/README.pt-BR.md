@@ -52,6 +52,15 @@ O comando sai com código `2` quando há achados de severidade high ou critical.
 - `eval`/`exec` e `subprocess(..., shell=True)`;
 - permissões com curinga e ferramentas perigosas em manifestos MCP.
 
+## Portão de atualizações: `skillfrisk diff`
+
+Os gerenciadores de skills atualizam comparando hashes de pastas e não mostram o que mudou
+nas instruções. `skillfrisk diff antiga/ nova/` compara duas versões locais: novos achados,
+mudanças de permissões (`allowed-tools`, comandos de shell, hosts de rede) e um veredicto com
+código de saída `2` diante de risco novo. `--fail-on any-change` também falha quando a
+superfície de permissões cresce. Os achados são comparados semanticamente, então mover texto
+não gera alarmes falsos.
+
 ## Controle de falsos positivos
 
 `tests/corpus/` traz 10 skills reais (92 arquivos) do repositório

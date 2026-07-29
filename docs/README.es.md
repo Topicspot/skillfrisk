@@ -53,6 +53,15 @@ El comando termina con código `2` cuando hay hallazgos de severidad high o crit
 - `eval`/`exec` y `subprocess(..., shell=True)`;
 - permisos con comodín y herramientas peligrosas en manifiestos MCP.
 
+## Puerta de actualizaciones: `skillfrisk diff`
+
+Los gestores de skills actualizan comparando hashes de carpetas y no muestran qué cambió en
+las instrucciones. `skillfrisk diff vieja/ nueva/` compara dos versiones locales: hallazgos
+nuevos, cambios de permisos (`allowed-tools`, comandos de shell, hosts de red) y un veredicto
+con código de salida `2` ante riesgo nuevo. `--fail-on any-change` también falla cuando crece
+la superficie de permisos. Los hallazgos se comparan semánticamente, así que mover texto no
+genera falsas alarmas.
+
 ## Control de falsos positivos
 
 `tests/corpus/` incluye 10 skills reales (92 archivos) de

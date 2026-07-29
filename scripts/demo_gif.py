@@ -183,7 +183,7 @@ def main() -> None:
         "--cmd",
         action="append",
         default=None,
-        help="Defaults to the two scans shown in the README.",
+        help="Defaults to the scan and diff scenes shown in the README.",
     )
     parser.add_argument("--columns", type=int, default=78)
     parser.add_argument("--font-size", type=int, default=15)
@@ -191,6 +191,7 @@ def main() -> None:
 
     commands = args.cmd or [
         "skillfrisk scan tests/fixtures/malicious_skill",
+        "skillfrisk diff tests/fixtures/benign_skill tests/fixtures/benign_skill_update",
         "skillfrisk scan tests/corpus/pdf",
     ]
     frames = build_frames(commands, args.cwd.resolve(), args.columns)
