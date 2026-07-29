@@ -7,6 +7,8 @@
 - Added SARIF output (`--sarif`) for GitHub code scanning integrations.
 - Added a GitHub Action `sarif` input and README upload example.
 - Added `--version` to the CLI.
+- Fixed the README demo image so it renders on PyPI: the relative path is now an absolute
+  raw.githubusercontent.com URL.
 - Added `[project.urls]` so the PyPI page links to the repository, issues and changelog.
   The 0.2.0 page has no links because metadata is only refreshed by a new release.
 - Added a release workflow that publishes to PyPI with Trusted Publishing (OIDC), builds

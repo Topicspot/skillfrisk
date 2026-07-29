@@ -4,7 +4,7 @@
 
 `skillfrisk` is a static security scanner for AI-agent skills and MCP servers.
 
-![skillfrisk demo](assets/demo.svg)
+![skillfrisk demo](https://raw.githubusercontent.com/Topicspot/skillfrisk/main/assets/demo.svg)
 
 ## Problem
 
