@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.4 - 2026-07-29
+
+- Fixed a silent false negative: pointing the scanner at a single file scanned nothing and
+  printed a clean result. Files are now scanned directly, so `skillfrisk scan SKILL.md` works.
+
 ## 0.2.3 - 2026-07-29
 
 - README shows a real terminal recording instead of a hand-drawn SVG. It is generated from
@@ -7,7 +12,6 @@
 - A clean scan prints a one line summary instead of an empty table.
 - Severity is coloured in the findings table, and the table title reports how many files were
   scanned.
-- Fixed: pointing the scanner at a single file scanned nothing and reported a clean result.
 
 ## Unreleased
 
