@@ -214,7 +214,7 @@ This project is free and MIT-licensed. If it saved you time, you can send a coff
 
 **USDT, Tron network (TRC-20) only:**
 
-```
+```text
 TS9ywGeSyKQxiCszdKCHLR8DRAsnYCosNN
 ```
 
