@@ -7,6 +7,7 @@
 - A clean scan prints a one line summary instead of an empty table.
 - Severity is coloured in the findings table, and the table title reports how many files were
   scanned.
+- Fixed: pointing the scanner at a single file scanned nothing and reported a clean result.
 
 ## Unreleased
 

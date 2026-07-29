@@ -50,6 +50,7 @@ Example finding:
 ```bash
 pipx install skillfrisk   # or: uv tool install skillfrisk / pip install skillfrisk
 skillfrisk scan path/to/skill-or-mcp --html reports/skillfrisk.html
+skillfrisk scan path/to/SKILL.md   # a single file works too
 ```
 
 One-off run without installing:

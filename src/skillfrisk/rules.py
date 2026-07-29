@@ -35,13 +35,21 @@ OBFUSCATION_PATTERN = re.compile(
 )
 
 
+def is_scannable(path: Path) -> bool:
+    return path.suffix.lower() in TEXT_SUFFIXES or path.name in {"SKILL.md", "mcp.json"}
+
+
 def iter_scannable_files(root: Path) -> Iterable[Path]:
+    if root.is_file():
+        if is_scannable(root):
+            yield root
+        return
     for path in root.rglob("*"):
         if not path.is_file():
             continue
         if any(part in {".git", ".venv", "node_modules", "__pycache__"} for part in path.parts):
             continue
-        if path.suffix.lower() in TEXT_SUFFIXES or path.name in {"SKILL.md", "mcp.json"}:
+        if is_scannable(path):
             yield path
 
 

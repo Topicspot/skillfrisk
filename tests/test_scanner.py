@@ -106,3 +106,15 @@ def test_findings_table_reports_the_file_count() -> None:
     assert completed.exit_code == 2
     assert "file(s)" in completed.output
     assert "PROMPT_INJECTION" in completed.output
+
+
+def test_scanning_a_single_file_reports_its_findings() -> None:
+    result = scan_path(FIXTURES / "malicious_skill" / "run.py")
+    assert result.files_scanned == 1
+    assert {finding.rule_id for finding in result.findings} >= {"PY_DYNAMIC_EXEC", "SECRET_ACCESS"}
+    assert result.failed
+
+
+def test_scanning_an_unsupported_file_scans_nothing() -> None:
+    result = scan_path(FIXTURES / "malicious_skill" / "SKILL.md")
+    assert result.files_scanned == 1
