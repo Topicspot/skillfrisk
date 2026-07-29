@@ -175,9 +175,9 @@ false positives at zero by construction.
 
 ## ☕ Support the author
 
-This project is free and MIT-licensed. If it saved you time, you can send a coffee — it directly funds the next feature.
+This project is free and MIT-licensed. If it saved you time, you can send a coffee.
 
-**USDT — Tron network (TRC-20) only:**
+**USDT, Tron network (TRC-20) only:**
 TS9ywGeSyKQxiCszdKCHLR8DRAsnYCosNN
 > ⚠️ Send **USDT on the Tron (TRC-20) network only**. Tokens sent on Ethereum, BSC or any other network will be lost forever.
 > No account, no fees, no strings attached. A ⭐ star helps just as much.
