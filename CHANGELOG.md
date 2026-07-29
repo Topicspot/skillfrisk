@@ -2,9 +2,15 @@
 
 ## Unreleased
 
+## 0.2.1 - 2026-07-29
+
 - Added SARIF output (`--sarif`) for GitHub code scanning integrations.
 - Added a GitHub Action `sarif` input and README upload example.
 - Added `--version` to the CLI.
+- Added `[project.urls]` so the PyPI page links to the repository, issues and changelog.
+  The 0.2.0 page has no links because metadata is only refreshed by a new release.
+- Added a release workflow that publishes to PyPI with Trusted Publishing (OIDC), builds
+  once, verifies that the tag matches the project version, and creates the GitHub release.
 
 ## 0.2.0 - 2026-07-28
 
