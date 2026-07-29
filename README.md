@@ -98,10 +98,10 @@ Scan an MCP manifest:
 uv run skillfrisk scan tests/fixtures/mcp_server --json
 ```
 
-Write an HTML report:
+Write HTML and SARIF reports:
 
 ```bash
-uv run skillfrisk scan . --html reports/report.html --no-fail-on-high
+uv run skillfrisk scan . --html reports/report.html --sarif reports/skillfrisk.sarif --no-fail-on-high
 ```
 
 ## Rule coverage
@@ -145,11 +145,11 @@ false positives at zero by construction.
 - Static analysis can miss runtime-only behavior.
 - Regex rules trade precision for speed and explainability; some findings may require human review.
 - JavaScript/TypeScript AST checks are not implemented yet.
-- SARIF output and PyPI publication are planned but not included in this first version.
+- SARIF output is available; JavaScript/TypeScript AST checks and configurable allowlists are still planned.
 
 ## Roadmap
 
-- SARIF reporter for GitHub code scanning.
+- GitHub code scanning workflow example around the SARIF reporter.
 - Dedicated JavaScript/TypeScript AST rules.
 - Rule configuration file with allowlisted paths.
 - Signed rule bundles and reproducible release workflow.

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Added SARIF output (`--sarif`) for GitHub code scanning integrations.
+- Added `--version` to the CLI.
+
 ## 0.2.0 - 2026-07-28
 
 - Renamed the project from skillscan to skillfrisk; the CLI command is now `skillfrisk`.
