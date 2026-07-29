@@ -75,6 +75,24 @@ Use in CI as a GitHub Action:
     path: "."
 ```
 
+To upload findings to GitHub code scanning, let the action write SARIF and upload it:
+
+```yaml
+permissions:
+  security-events: write
+
+steps:
+  - uses: actions/checkout@v4
+  - uses: Topicspot/skillfrisk@main
+    with:
+      path: "."
+      sarif: reports/skillfrisk.sarif
+      args: --no-fail-on-high
+  - uses: github/codeql-action/upload-sarif@v3
+    with:
+      sarif_file: reports/skillfrisk.sarif
+```
+
 Or with Docker:
 
 ```bash
@@ -149,7 +167,6 @@ false positives at zero by construction.
 
 ## Roadmap
 
-- GitHub code scanning workflow example around the SARIF reporter.
 - Dedicated JavaScript/TypeScript AST rules.
 - Rule configuration file with allowlisted paths.
 - Signed rule bundles and reproducible release workflow.

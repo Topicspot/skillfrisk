@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added SARIF output (`--sarif`) for GitHub code scanning integrations.
+- Added a GitHub Action `sarif` input and README upload example.
 - Added `--version` to the CLI.
 
 ## 0.2.0 - 2026-07-28
