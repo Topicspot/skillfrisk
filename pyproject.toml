@@ -8,6 +8,12 @@ license = {text = "MIT"}
 authors = [{name = "Topicspot"}]
 dependencies = ["typer>=0.16", "rich>=13.9", "pyyaml>=6.0.2", "click>=8.3.3"]
 
+[project.urls]
+Homepage = "https://github.com/Topicspot/skillfrisk"
+Repository = "https://github.com/Topicspot/skillfrisk"
+Changelog = "https://github.com/Topicspot/skillfrisk/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Topicspot/skillfrisk/issues"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=9.0.3",
