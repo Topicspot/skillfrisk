@@ -136,7 +136,7 @@ uv run skillfrisk scan . --json --min-severity high --no-fail-on-high
 
 ## Update gate: `skillfrisk diff`
 
-Skill managers update skills by comparing folder hashes and reinstalling. None of them show what changed inside the instructions a privileged agent will follow. A skill update is a merge of unreviewed third-party text into your agent's context.
+Most skill managers update skills by comparing folder hashes and reinstalling, without showing what changed inside the instructions a privileged agent will follow. A skill update is a merge of unreviewed third-party text into your agent's context.
 
 `skillfrisk diff` compares two local versions of a skill and reports what the update changes, offline and in milliseconds:
 
@@ -193,6 +193,7 @@ Several scanners target the same problem. Use whichever fits your workflow:
 - [snyk/agent-scan](https://github.com/snyk/agent-scan) - discovers agents, skills and MCP servers installed on your machine and checks them via Snyk's verification service.
 - [cisco-ai-defense/skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) - YAML/YARA pattern engine with optional LLM, VirusTotal and API integrations; CLI, library and REST API.
 - [NMitchem/SkillScan](https://github.com/NMitchem/SkillScan) - static analysis plus LLM behavioral prediction and Docker sandbox execution (owns the `skillscan` name on PyPI).
+- [seifreed/skill-veil](https://github.com/seifreed/skill-veil) - Rust policy engine for the agent extension supply chain, with optional LLM adjudication; its report `diff` with baselines and PR gating covers the same update-review ground as `skillfrisk diff`, with more machinery around it.
 
 This project stays deliberately small: no LLM calls, no network access, no Docker requirement,
 no API keys. One dependency-light Python package that runs in milliseconds, so it fits in a
