@@ -46,12 +46,25 @@ def scan(
     sarif_output: Annotated[
         Path | None, typer.Option("--sarif", help="Write SARIF report.")
     ] = None,
+    min_severity: Annotated[
+        str,
+        typer.Option(
+            "--min-severity",
+            help="Only report findings at this severity or higher: low, medium, high, critical.",
+        ),
+    ] = "low",
     no_fail_on_high: Annotated[
         bool,
         typer.Option("--no-fail-on-high", help="Do not exit non-zero for high findings."),
     ] = False,
 ) -> None:
+    levels = {level.value for level in Severity}
+    if min_severity not in levels:
+        typer.echo(f"invalid --min-severity value: {min_severity} (choose from {sorted(levels)})")
+        raise typer.Exit(1)
+    threshold = SEVERITY_SCORE[Severity(min_severity)]
     result = scan_path(path)
+    result.findings = [f for f in result.findings if SEVERITY_SCORE[f.severity] >= threshold]
     if html_output:
         html_output.parent.mkdir(parents=True, exist_ok=True)
         html_output.write_text(result_to_html(result), encoding="utf-8")

@@ -128,6 +128,12 @@ Write HTML and SARIF reports:
 uv run skillfrisk scan . --html reports/report.html --sarif reports/skillfrisk.sarif --no-fail-on-high
 ```
 
+Report only high or critical findings:
+
+```bash
+uv run skillfrisk scan . --json --min-severity high --no-fail-on-high
+```
+
 ## Update gate: `skillfrisk diff`
 
 Skill managers update skills by comparing folder hashes and reinstalling. None of them show what changed inside the instructions a privileged agent will follow. A skill update is a merge of unreviewed third-party text into your agent's context.

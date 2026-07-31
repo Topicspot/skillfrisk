@@ -118,3 +118,66 @@ def test_scanning_a_single_file_reports_its_findings() -> None:
 def test_scanning_an_unsupported_file_scans_nothing() -> None:
     result = scan_path(FIXTURES / "malicious_skill" / "SKILL.md")
     assert result.files_scanned == 1
+
+
+def test_cli_min_severity_high_filters_terminal_table() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(
+        app, ["scan", str(FIXTURES / "malicious_skill"), "--min-severity", "high"]
+    )
+    assert completed.exit_code == 2
+    assert "high" in completed.output
+    assert "critical" in completed.output
+    assert "medium" not in completed.output
+    assert "low" not in completed.output
+
+
+def test_cli_min_severity_medium_filters_json() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(
+        app, ["scan", str(FIXTURES / "mcp_server"), "--json", "--min-severity", "medium"]
+    )
+    assert completed.exit_code == 2
+    payload = json.loads(completed.output)
+    for finding in payload["findings"]:
+        assert finding["severity"] in {"medium", "high", "critical"}
+    assert any(f["severity"] == "medium" for f in payload["findings"])
+    assert any(f["severity"] == "high" for f in payload["findings"])
+
+
+def test_cli_min_severity_default_low_includes_all() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(app, ["scan", str(FIXTURES / "malicious_skill"), "--json"])
+    assert completed.exit_code == 2
+    payload = json.loads(completed.output)
+    severities = {f["severity"] for f in payload["findings"]}
+    assert "medium" in severities
+    assert "high" in severities
+
+
+def test_cli_rejects_invalid_min_severity() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(
+        app, ["scan", str(FIXTURES / "benign_skill"), "--min-severity", "extreme"]
+    )
+    assert completed.exit_code == 1
+    assert "invalid --min-severity value" in completed.output
+
+
+def test_cli_min_severity_high_with_no_fail_on_high() -> None:
+    runner = CliRunner()
+    completed = runner.invoke(
+        app,
+        [
+            "scan",
+            str(FIXTURES / "malicious_skill"),
+            "--json",
+            "--min-severity",
+            "high",
+            "--no-fail-on-high",
+        ],
+    )
+    assert completed.exit_code == 0
+    payload = json.loads(completed.output)
+    for finding in payload["findings"]:
+        assert finding["severity"] in {"high", "critical"}
